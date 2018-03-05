@@ -2,6 +2,10 @@
 
 module.exports = function(lando) {
 
+  // Modules
+  var _ = lando.node._;
+  var table = new lando.cli.Table();
+
   // Task object
   return {
     command: 'info [appname]',
@@ -10,6 +14,12 @@ module.exports = function(lando) {
       deep: {
         describe: 'Get ALL the info',
         alias: ['d'],
+        default: false,
+        boolean: true
+      },
+      urls: {
+        describe: 'Get the URLs for the app',
+        alias: ['u'],
         default: false,
         boolean: true
       }
@@ -31,6 +41,26 @@ module.exports = function(lando) {
               .then(function(data) {
                 console.log(JSON.stringify(data, null, 2));
               });
+            });
+          }
+
+          // Return URLs only
+          else if (options.urls) {
+            return lando.app.info(app)
+            .then(function(info) {
+              _.forEach(info, function(service, key) {
+                if (!_.isEmpty(service.urls)) {
+                  var opts = (_.has(service, 'urls')) ? {arrayJoiner: '\n'} : {};
+                  table.add(_.toUpper(key), service.urls, opts);
+                }
+              });
+
+              if (!_.isEmpty(table)) {
+                console.log('');
+                console.log(table.toString());
+                console.log('');
+              }
+
             });
           }
 

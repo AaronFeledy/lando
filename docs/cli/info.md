@@ -19,4 +19,5 @@ Options
 
 ```bash
   --deep, -d  Get ALL the info                        [boolean] [default: false]
+  --urls, -u  Get the URLs for the app                [boolean] [default: false]
 ```
